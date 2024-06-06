@@ -4,7 +4,6 @@ import time
 import yaml
 import boto3
 import os
-from dotenv import load_dotenv
 from datetime import datetime
 
 def load_config():

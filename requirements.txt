@@ -1,5 +1,6 @@
 boto3==1.34.102
 requests==2.31.0
 schedule==1.2.2
+cython==0.29.32
 PyYAML==5.4.1
 

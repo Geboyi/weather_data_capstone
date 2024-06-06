@@ -1,14 +1,13 @@
 import requests
 import json
 import time
-import yaml
 import boto3
 import os
 from datetime import datetime
 
 def load_config():
-    with open('config/config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
+    with open('config/config.json', 'r') as file:
+        config = json.load(file)
     return config
 
 def fetch_weather_data(api_call):

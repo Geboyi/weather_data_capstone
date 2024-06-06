@@ -1,11 +1,10 @@
 import json
 import boto3
-import yaml
 import os
 
 def load_config():
-    with open('config/config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
+    with open('config/config.json', 'r') as file:
+        config = json.load(file)
     return config
 
 def process_weather_data(raw_data):

@@ -1,0 +1,9 @@
+api_call: 'https://api.openweathermap.org/data/3.0/onecall?lat=30.489772&lon=-99.771335&units=metric&exclude=hourly,minutely&appid={be68ae7486e58ef97224c25107214f32}'
+
+interval: 3600  # Fetch data every hour
+
+s3:
+  bucket: "trestle-7878-weather-b"
+  key: "weather_data/raw/{timestamp}.json"
+  region: "eu-west-1"
+  key1: "weather_data/processed/{timestamp}.json"

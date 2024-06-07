@@ -1,7 +1,11 @@
 # Weather Data Processing Project
 
 ## Overview
-This project fetches real-time weather data from the OpenWeatherMap API at regular intervals, processes the data, and stores it in an S3 bucket and locally for further analysis and visualization. The project is structured to facilitate batch processing of weather data and employs GitHub Actions for scheduling and automation.
+This project fetches weather data from the Visual Crossing API at regular hourly intervals, processes the data, and stores it in an S3 bucket and locally for further analysis and visualization. The project is structured to facilitate batch processing of weather data and employs GitHub Actions for scheduling and automation. Terraform for AWS S3 resource provisioning. 
+
+## Architecture
+Kindly find the architecture of the project via the link below:
+- ![Project Architecture](https://drive.google.com/file/d/1pt6APvVT29ZSzdU-FRpImCMJf_vCHKbC/view?usp=sharing)
 
 ## Project Scenario
 Imagine you are working on a project where you need to continuously monitor and analyze weather data to provide insights and forecasts. This project is designed to automate the collection and processing of weather data, ensuring that you always have the latest information available for analysis.
@@ -36,7 +40,7 @@ weather_data_p
 - **Boto3**: For interacting with AWS S3.
 - **GitHub Actions**: For scheduling and automation.
 - **Terraform**: For infrastructure as code (optional, depending on your deployment strategy).
-- **VisualCrossing API**: Source of weather data.
+- **Visual Crossing API**: Source of weather data.
 - **AWS S3**: For storing raw and processed data.
 
 ## Process and Procedure
@@ -86,4 +90,7 @@ The workflow defined in .github/workflows/terraform.yml will trigger the pipelin
 ## Notes
 - Adjust the fetch interval in config/config.yaml as needed.
 - Ensure you have the necessary AWS permissions to upload data to S3.
+
+
+
 

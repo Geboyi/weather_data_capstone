@@ -43,14 +43,14 @@ def main():
     region = config['s3']['region']
     # interval = config['interval']
 
-    while True:
-        weather_data = fetch_weather_data(api_call)
-        if weather_data:
-            save_raw_data(weather_data)  # Save raw data locally
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            s3_key = s3_key_template.format(timestamp=timestamp)
-            upload_to_s3(weather_data, s3_bucket, s3_key, region)
-        #time.sleep(interval)
+    
+    weather_data = fetch_weather_data(api_call)
+    if weather_data:
+        save_raw_data(weather_data)  # Save raw data locally
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        s3_key = s3_key_template.format(timestamp=timestamp)
+        upload_to_s3(weather_data, s3_bucket, s3_key, region)
+    #time.sleep(interval)
 
 if __name__ == "__main__":
     main()

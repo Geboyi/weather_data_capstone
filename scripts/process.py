@@ -36,6 +36,11 @@ def upload_to_s3(file_path, bucket_name, key, region):
 def main():
     config = load_config()
     processed_data_dir = 'data/processed'
+    
+    # Ensure the processed data directory exists
+    if not os.path.exists(processed_data_dir):
+        os.makedirs(processed_data_dir)
+    
     s3_bucket = config['s3']['bucket']
     s3_region = config['s3']['region']
     s3_key_processed = config['s3']['key1']

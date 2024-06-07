@@ -63,8 +63,8 @@ jobs:
  
       - name: Run fetch script
         working-directory: ./scripts/
-        run: python fetch.py
+        run: python3 fetch.py
 
       - name: Run process scrip
         working-directory: ./scripts/
-        run: python process.py
+        run: python3 process.py

@@ -1,6 +1,5 @@
 {
   "api_call": "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/London,UK?key=NP3RYYYFBJ76SEY7K2792FW4E",
-  // "interval": 3600,
   "s3": {
     "bucket": "trestle-7878-weather-b",
     "key": "weather_data/raw/{timestamp}.json",

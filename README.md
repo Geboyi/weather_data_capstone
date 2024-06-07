@@ -13,7 +13,7 @@ weather_data_p
 │ └─ terraform.yml
 ├─ .gitignore
 ├─ config
-│ └─ config.yaml
+│ └─ config.json
 ├─ data
 │ ├─ processed
 │ └─ raw

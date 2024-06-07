@@ -7,6 +7,7 @@ This project fetches real-time weather data from the OpenWeatherMap API at regul
 Imagine you are working on a project where you need to continuously monitor and analyze weather data to provide insights and forecasts. This project is designed to automate the collection and processing of weather data, ensuring that you always have the latest information available for analysis.
 
 ## Project Structure
+```
 weather_data_p
 ├─ .github
 │ └─ workflows
@@ -28,14 +29,14 @@ weather_data_p
 ├─ main.tf
 ├─ output.tf
 └─ variables.tf
-
+```
 
 ## Tools and Technologies
 - **Python**: For scripting and data processing.
 - **Boto3**: For interacting with AWS S3.
 - **GitHub Actions**: For scheduling and automation.
 - **Terraform**: For infrastructure as code (optional, depending on your deployment strategy).
-- **OpenWeatherMap API**: Source of weather data.
+- **VisualCrossing API**: Source of weather data.
 - **AWS S3**: For storing raw and processed data.
 
 ## Process and Procedure
@@ -48,7 +49,7 @@ weather_data_p
 3. Configure the project by setting your API key and other settings in config/config.yaml.
 
 ### 2. Fetching Weather Data
-The fetch.py script fetches data from the OpenWeatherMap API and uploads the raw data to an S3 bucket and saves it locally in the data/raw directory.
+The fetch.py script fetches data from the VisualCrossing API and uploads the raw data to an S3 bucket and saves it locally in the data/raw directory.
 ##### Run the fetch script
 python scripts/fetch.py
 

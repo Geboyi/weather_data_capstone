@@ -62,7 +62,7 @@ jobs:
           pip install -r requirements.txt
  
       - name: Run fetch script
-        run: python scripts/fetch.py
+        run: python fetch.py
 
       - name: Run process script
-        run: python scripts/process.py
+        run: python process.py

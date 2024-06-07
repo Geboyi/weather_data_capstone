@@ -1,11 +1,11 @@
-# Weather Data Processing Project
+# Leveraging GitHub Actions for Automated weather Data Processing (batch processing)
 
 ## Overview
 This project fetches weather data from the Visual Crossing API at regular hourly intervals, processes the data, and stores it in an S3 bucket and locally for further analysis and visualization. The project is structured to facilitate batch processing of weather data and employs GitHub Actions for scheduling and automation. Terraform for AWS S3 resource provisioning. 
 
 ## Architecture
 Kindly find the architecture of the project via the link below:
-- ![Project Architecture](https://drive.google.com/file/d/1pt6APvVT29ZSzdU-FRpImCMJf_vCHKbC/view?usp=sharing)
+- https://drive.google.com/file/d/1pt6APvVT29ZSzdU-FRpImCMJf_vCHKbC/view?usp=sharing
 
 ## Project Scenario
 Imagine you are working on a project where you need to continuously monitor and analyze weather data to provide insights and forecasts. This project is designed to automate the collection and processing of weather data, ensuring that you always have the latest information available for analysis.

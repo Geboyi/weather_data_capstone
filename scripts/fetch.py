@@ -6,7 +6,9 @@ import os
 from datetime import datetime
 
 def load_config():
-    with open('config/config.json', 'r') as file:
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(script_dir, 'config', 'config.json')
+    with open(config_path, 'r') as file:
         config = json.load(file)
     return config
 

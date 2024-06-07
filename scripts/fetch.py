@@ -1,6 +1,6 @@
 import requests
 import json
-import time
+#import time
 import boto3
 import os
 from datetime import datetime
@@ -41,7 +41,7 @@ def main():
     s3_bucket = config['s3']['bucket']
     s3_key_template = config['s3']['key']
     region = config['s3']['region']
-    interval = config['interval']
+    # interval = config['interval']
 
     while True:
         weather_data = fetch_weather_data(api_call)
@@ -50,7 +50,7 @@ def main():
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
             s3_key = s3_key_template.format(timestamp=timestamp)
             upload_to_s3(weather_data, s3_bucket, s3_key, region)
-        time.sleep(interval)
+        #time.sleep(interval)
 
 if __name__ == "__main__":
     main()

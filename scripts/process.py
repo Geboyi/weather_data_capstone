@@ -3,7 +3,7 @@ import boto3
 import os
 
 def load_config():
-    with open('./../config/config.json', 'r') as file:
+    with open('config/config.json', 'r') as file:
         config = json.load(file)
     return config
 

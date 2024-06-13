@@ -1,6 +1,7 @@
 import json
 import boto3
 import os
+from fetch import fetch_weather_data  # Import the fetch_weather_data function
 
 def load_config():
     with open('./config/config.json', 'r') as file:
@@ -35,22 +36,19 @@ def upload_to_s3(file_path, bucket_name, key, region):
 
 def main():
     config = load_config()
+    api_call = config['api_call']
+    weather_data = fetch_weather_data(api_call)  # Call the fetch_weather_data function
+    processed_data = process_weather_data(weather_data)
     processed_data_dir = 'data/processed'
     
-    # Ensure the processed data directory exists
-    if not os.path.exists(processed_data_dir):
-        os.makedirs(processed_data_dir)
+    # Save processed data locally
+    filename = save_processed_data(processed_data, processed_data_dir)
     
+    # Upload processed data to S3
     s3_bucket = config['s3']['bucket']
     s3_region = config['s3']['region']
-    s3_key_processed = config['s3']['key1']
-    
-    for filename in os.listdir(processed_data_dir):
-        if filename.endswith('.json'):
-            with open(os.path.join(processed_data_dir, filename), 'r') as file:
-                processed_data = json.load(file)
-                processed_file_path = os.path.join(processed_data_dir, filename)
-                upload_to_s3(processed_file_path, s3_bucket, s3_key_processed.format(timestamp=processed_data['timestamp']), s3_region)
+    s3_key_processed = f"weather_data/processed/weather_{processed_data['timestamp']}.json"
+    upload_to_s3(filename, s3_bucket, s3_key_processed, s3_region)
 
 if __name__ == "__main__":
     main()

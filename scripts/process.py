@@ -8,18 +8,13 @@ def load_config():
     return config
 
 def process_weather_data(raw_data):
-    try:
-        processed_data = {
-            'temperature': raw_data['main']['temp'],
-            'humidity': raw_data['main']['humidity'],
-            'weather': raw_data['weather'][0]['description'],
-            'timestamp': raw_data['dt']
-        }
-        return processed_data
-    except KeyError as e:
-        print(f"KeyError: {e} not found in raw data")
-        return None
-
+    processed_data = {
+        'temperature': raw_data['main']['temp'],
+        'humidity': raw_data['main']['humidity'],
+        'weather': raw_data['weather'][0]['description'],
+        'timestamp': raw_data['dt']
+    }
+    return processed_data
 
 def save_processed_data(processed_data, output_dir='data/processed'):
     if not os.path.exists(output_dir):
@@ -40,32 +35,22 @@ def upload_to_s3(file_path, bucket_name, key, region):
 
 def main():
     config = load_config()
-    raw_data_dir = 'data/raw'
     processed_data_dir = 'data/processed'
     
-    # Ensure the directories exist
-    if not os.path.exists(raw_data_dir):
-        os.makedirs(raw_data_dir)
+    # Ensure the processed data directory exists
     if not os.path.exists(processed_data_dir):
         os.makedirs(processed_data_dir)
-
+    
     s3_bucket = config['s3']['bucket']
     s3_region = config['s3']['region']
-    s3_key_processed_template = config['s3']['key1']
+    s3_key_processed = config['s3']['key1']
     
-    # Process each raw data file
-    for filename in os.listdir(raw_data_dir):
+    for filename in os.listdir(processed_data_dir):
         if filename.endswith('.json'):
-            raw_file_path = os.path.join(raw_data_dir, filename)
-            with open(raw_file_path, 'r') as file:
-                raw_data = json.load(file)
-                processed_data = process_weather_data(raw_data)
-                
-                if processed_data:
-                    processed_file_path = save_processed_data(processed_data, processed_data_dir)
-                    s3_key_processed = s3_key_processed_template.format(timestamp=processed_data['timestamp'])
-                    s3_key_processed = f"weather_data/processed/{os.path.basename(s3_key_processed)}"
-                    upload_to_s3(processed_file_path, s3_bucket, s3_key_processed, s3_region)
+            with open(os.path.join(processed_data_dir, filename), 'r') as file:
+                processed_data = json.load(file)
+                processed_file_path = os.path.join(processed_data_dir, filename)
+                upload_to_s3(processed_file_path, s3_bucket, s3_key_processed.format(timestamp=processed_data['timestamp']), s3_region)
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,6 @@
     "bucket": "trestle-7878-weather-b",
     "key": "weather_data/raw/{timestamp}.json",
     "region": "eu-west-1",
-    "key1": "weather_data_processed/processed_weather_{timestamp}.json"
+    "key1": "weather_data/processed/weather_{timestamp}.json"
   }
 }

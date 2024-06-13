@@ -49,7 +49,7 @@ def main():
     config = load_config()
     s3_bucket = config['s3']['bucket']
     s3_region = config['s3']['region']
-    s3_key_raw = config['s3']['key']
+    s3_key_raw_template = config['s3']['key']
     s3_key_processed_template = config['s3']['key1']
     
     raw_data_dir = 'data/raw'
@@ -61,14 +61,26 @@ def main():
     if not os.path.exists(processed_data_dir):
         os.makedirs(processed_data_dir)
 
-    raw_data_file = f"{raw_data_dir}/latest_weather.json"
-    raw_data = download_from_s3(s3_bucket, s3_key_raw, raw_data_file, s3_region)
-    
-    if raw_data:
-        processed_data = process_weather_data(raw_data)
-        processed_file_path = save_processed_data(processed_data, processed_data_dir)
-        s3_key_processed = s3_key_processed_template.format(timestamp=processed_data['timestamp'])
-        upload_to_s3(processed_file_path, s3_bucket, s3_key_processed, s3_region)
+    # List objects in the raw data directory of the S3 bucket
+    s3_client = boto3.client('s3', region_name=s3_region)
+    raw_objects = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix='weather_data/raw/')
+
+    if 'Contents' in raw_objects:
+        for obj in raw_objects['Contents']:
+            raw_key = obj['Key']
+            raw_filename = os.path.basename(raw_key)
+            raw_data_file = f"{raw_data_dir}/{raw_filename}"
+            raw_data = download_from_s3(s3_bucket, raw_key, raw_data_file, s3_region)
+            
+            if raw_data:
+                processed_data = process_weather_data(raw_data)
+                processed_file_path = save_processed_data(processed_data, processed_data_dir)
+                s3_key_processed = s3_key_processed_template.format(timestamp=processed_data['timestamp'])
+                
+                # Ensure the key for processed data points to the 'processed/' directory
+                s3_key_processed = f"weather_data/processed/{os.path.basename(s3_key_processed)}"
+                
+                upload_to_s3(processed_file_path, s3_bucket, s3_key_processed, s3_region)
 
 if __name__ == "__main__":
     main()

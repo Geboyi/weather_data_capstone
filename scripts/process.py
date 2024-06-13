@@ -1,20 +1,35 @@
 import json
+import requests
 import boto3
 import os
+from datetime import datetime
 
 def load_config():
     with open('./config/config.json', 'r') as file:
         config = json.load(file)
     return config
 
+def fetch_weather_data(api_call):
+    response = requests.get(api_call)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to fetch data: {response.status_code}")
+        return None
+
 def process_weather_data(raw_data):
-    processed_data = {
-        'temperature': raw_data['main']['temp'],
-        'humidity': raw_data['main']['humidity'],
-        'weather': raw_data['weather'][0]['description'],
-        'timestamp': raw_data['dt']
-    }
-    return processed_data
+    try:
+        print(f"Raw data received for processing: {raw_data}")
+        processed_data = {
+            'temperature': raw_data['main']['temp'],
+            'humidity': raw_data['main']['humidity'],
+            'weather': raw_data['weather'][0]['description'],
+            'timestamp': raw_data['dt']
+        }
+        return processed_data
+    except KeyError as e:
+        print(f"Missing key in raw data: {e}")
+        return None
 
 def save_processed_data(processed_data, output_dir='data/processed'):
     if not os.path.exists(output_dir):
@@ -24,18 +39,6 @@ def save_processed_data(processed_data, output_dir='data/processed'):
         json.dump(processed_data, file)
     print(f"Processed data saved locally to {filename}")
     return filename
-
-def download_from_s3(bucket_name, key, download_path, region):
-    s3_client = boto3.client('s3', region_name=region)
-    try:
-        s3_client.download_file(bucket_name, key, download_path)
-        print(f"Raw data downloaded from S3 bucket '{bucket_name}' with key '{key}' to {download_path}")
-        with open(download_path, 'r') as file:
-            raw_data = json.load(file)
-        return raw_data
-    except Exception as e:
-        print(f"Failed to download raw data from S3: {e}")
-        return None
 
 def upload_to_s3(file_path, bucket_name, key, region):
     s3_client = boto3.client('s3', region_name=region)
@@ -47,9 +50,9 @@ def upload_to_s3(file_path, bucket_name, key, region):
 
 def main():
     config = load_config()
+    api_call = config['api_call']
     s3_bucket = config['s3']['bucket']
     s3_region = config['s3']['region']
-    s3_key_raw_template = config['s3']['key']
     s3_key_processed_template = config['s3']['key1']
     
     raw_data_dir = 'data/raw'
@@ -61,26 +64,26 @@ def main():
     if not os.path.exists(processed_data_dir):
         os.makedirs(processed_data_dir)
 
-    # List objects in the raw data directory of the S3 bucket
-    s3_client = boto3.client('s3', region_name=s3_region)
-    raw_objects = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix='weather_data/raw/')
-
-    if 'Contents' in raw_objects:
-        for obj in raw_objects['Contents']:
-            raw_key = obj['Key']
-            raw_filename = os.path.basename(raw_key)
-            raw_data_file = f"{raw_data_dir}/{raw_filename}"
-            raw_data = download_from_s3(s3_bucket, raw_key, raw_data_file, s3_region)
+    # Fetch weather data from the API
+    weather_data = fetch_weather_data(api_call)
+    if weather_data:
+        # Save raw data locally (optional)
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        raw_data_file = f"{raw_data_dir}/weather_{timestamp}.json"
+        with open(raw_data_file, 'w') as file:
+            json.dump(weather_data, file)
+        print(f"Raw data saved locally to {raw_data_file}")
+        
+        # Process the raw data
+        processed_data = process_weather_data(weather_data)
+        if processed_data:
+            # Save processed data locally
+            processed_file_path = save_processed_data(processed_data, processed_data_dir)
             
-            if raw_data:
-                processed_data = process_weather_data(raw_data)
-                processed_file_path = save_processed_data(processed_data, processed_data_dir)
-                s3_key_processed = s3_key_processed_template.format(timestamp=processed_data['timestamp'])
-                
-                # Ensure the key for processed data points to the 'processed/' directory
-                s3_key_processed = f"weather_data/processed/{os.path.basename(s3_key_processed)}"
-                
-                upload_to_s3(processed_file_path, s3_bucket, s3_key_processed, s3_region)
+            # Upload processed data to S3
+            s3_key_processed = s3_key_processed_template.format(timestamp=processed_data['timestamp'])
+            s3_key_processed = f"weather_data/processed/{os.path.basename(s3_key_processed)}"
+            upload_to_s3(processed_file_path, s3_bucket, s3_key_processed, s3_region)
 
 if __name__ == "__main__":
     main()

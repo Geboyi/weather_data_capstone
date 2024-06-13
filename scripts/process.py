@@ -8,13 +8,18 @@ def load_config():
     return config
 
 def process_weather_data(raw_data):
-    processed_data = {
-        'temperature': raw_data['main']['temp'],
-        'humidity': raw_data['main']['humidity'],
-        'weather': raw_data['weather'][0]['description'],
-        'timestamp': raw_data['dt']
-    }
-    return processed_data
+    try:
+        processed_data = {
+            'temperature': raw_data['main']['temp'],
+            'humidity': raw_data['main']['humidity'],
+            'weather': raw_data['weather'][0]['description'],
+            'timestamp': raw_data['dt']
+        }
+        return processed_data
+    except KeyError as e:
+        print(f"KeyError: {e} not found in raw data")
+        return None
+
 
 def save_processed_data(processed_data, output_dir='data/processed'):
     if not os.path.exists(output_dir):
